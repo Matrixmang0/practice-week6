@@ -1,0 +1,40 @@
+name: 🚀 Deploy to GKE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: 🔄 Deploy to GKE & Comment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔐 Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIAL }}
+
+      - name: 🧰 Set up gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: 'gke-gcloud-auth-plugin,kubectl'
+
+      - name: 📡 Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials iris-cluster --region us-central1 --project neural-mantra-461520-m0
+
+      - name: ♻️ Update Kubernetes deployment image
+        run: |
+          echo "♻️ Updating Kubernetes deployment image..."
+          kubectl set image deployment/iris-deployment iris-api=us-central1-docker.pkg.dev/neural-mantra-461520-m0/my-repo/iris-api:latest --namespace=default
+
+      - name: 💬 Comment on commit
+        uses: peter-evans/commit-comment@v3
+        with:
+          message: 🚀 Successfully deployed to GKE.
+
