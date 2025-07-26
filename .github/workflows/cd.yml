@@ -32,9 +32,5 @@ jobs:
         run: |
           echo "♻️ Updating Kubernetes deployment image..."
           kubectl set image deployment/iris-deployment iris-api-sha256-1=us-central1-docker.pkg.dev/neural-mantra-461520-m0/my-repo/iris-api:latest --namespace=default
-
-      - name: 💬 Comment on commit
-        uses: peter-evans/commit-comment@v3
-        with:
-          message: 🚀 Successfully deployed to GKE.
+         message: 🚀 Successfully Deployed
 
